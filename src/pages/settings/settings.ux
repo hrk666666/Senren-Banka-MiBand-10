@@ -60,14 +60,6 @@
         <text class="card-label">自动保存</text>
         <image class="switch-img" src="/common/images/{{ settings.autoSave ? 'Switch_ON' : 'Switch_OFF' }}.png"></image>
       </div>
-      <div class="card switch-row" @click="toggleKeepScreenOn">
-        <text class="card-label">屏幕常亮</text>
-        <image class="switch-img" src="/common/images/{{ settings.keepScreenOn ? 'Switch_ON' : 'Switch_OFF' }}.png"></image>
-      </div>
-      <div class="card switch-row" @click="toggleLowBrightness">
-        <text class="card-label">低亮度模式</text>
-        <image class="switch-img" src="/common/images/{{ settings.lowBrightness ? 'Switch_ON' : 'Switch_OFF' }}.png"></image>
-      </div>
       <div class="card switch-row" @click="toggleVibration">
         <text class="card-label">振动反馈</text>
         <image class="switch-img" src="/common/images/{{ settings.vibration ? 'Switch_ON' : 'Switch_OFF' }}.png"></image>
@@ -116,9 +108,7 @@ export default {
       autoPlayDelay: 500,
       boldText: true,
       autoSave: true,
-      keepScreenOn: false,
       darkMode: false,
-      lowBrightness: false,
       vibration: true
     }
   },
@@ -199,16 +189,6 @@ export default {
 
   toggleAutoSave() {
     this.settings.autoSave = !this.settings.autoSave
-    vibrateShort()
-  },
-
-  toggleKeepScreenOn() {
-    this.settings.keepScreenOn = !this.settings.keepScreenOn
-    vibrateShort()
-  },
-
-  toggleLowBrightness() {
-    this.settings.lowBrightness = !this.settings.lowBrightness
     vibrateShort()
   },
 
@@ -367,5 +347,48 @@ export default {
   width: 100%;
   color: #ffffff;
   text-align: left;
+}
+
+/* 方形屏（手环 10 Pro / 9 Pro / 8 Pro，336x480） */
+@media (shape: rect) {
+  .header {
+    top: 13px;
+    height: 28px;
+  }
+  .header-title {
+    font-size: 16px;
+  }
+  .list {
+    top: 48px;
+    bottom: 100px;
+  }
+  .item {
+    min-height: 35px;
+    margin-bottom: 5px;
+    padding: 6px 10px;
+    border-radius: 16px;
+  }
+  .item-title {
+    font-size: 12px;
+  }
+  .item-desc {
+    font-size: 11px;
+  }
+  .bottom-bar {
+    bottom: 82px;
+  }
+  .reset-btn {
+    height: 30px;
+    border-radius: 15px;
+  }
+  .reset-btn-text {
+    font-size: 13px;
+  }
+  .preview-panel {
+    bottom: 10px;
+    height: 60px;
+    border-radius: 13px;
+    padding: 8px;
+  }
 }
 </style>

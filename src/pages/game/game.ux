@@ -164,7 +164,6 @@ import { vibrateShort } from "../../common/vibrate.js"
 import storage from "@system.storage"
 import router from "@system.router"
 import prompt from "@system.prompt"
-import brightness from "@system.brightness"
 
 const AUTO_SAVE_INTERVAL = 3000
 const AUTO_PLAY_DELAY = 500
@@ -239,9 +238,7 @@ export default {
       autoPlayDelay: 500,
       boldText: true,
       autoSave: true,
-      keepScreenOn: false,
       darkMode: false,
-      lowBrightness: false,
       vibration: true
     }
   },
@@ -255,8 +252,6 @@ export default {
     this.stopBottomTime()
     if (this._fxTimer) clearTimeout(this._fxTimer)
     if (this._rt) this._rt.destroy()
-
-    this.restoreBrightness()
   },
 
   onHide() {
@@ -266,7 +261,6 @@ export default {
     this.clearPageLongTimer()
     this.clearFFLongPressTimer()
     this.stopBottomTime()
-    this.restoreBrightness()
   },
 
   onInit() {
@@ -309,7 +303,6 @@ export default {
     }
 
     this.captureOriginalBrightness()
-    this.applyKeepScreenOn()
     this.startBottomTime()
   },
 
@@ -321,37 +314,6 @@ export default {
         this.displayText = "后日谈加载失败"
         this._afterStoryMode = false
       })
-    }
-  },
-
-  // 记录用户进入游戏前的系统亮度（仅在未被本应用改动前记录一次）
-  captureOriginalBrightness() {
-    if (this._origBrightness !== undefined) return
-    try {
-      brightness.getValue({
-        success: (d) => {
-          if (this._origBrightness === undefined && !(this.settings && this.settings.lowBrightness)) {
-            this._origBrightness = d.value
-          }
-        }
-      })
-    } catch (e) {}
-  },
-
-  // 离开游戏 / 页面销毁：关闭常亮，并恢复进入前的系统亮度
-  restoreBrightness() {
-    try {
-      brightness.setKeepScreenOn({ keepScreenOn: false })
-    } catch (e) {}
-    if (this._lowBrightnessApplied) {
-      try {
-        if (this._origBrightness !== undefined) {
-          brightness.setValue({ value: this._origBrightness })
-        } else {
-          brightness.setValue({ value: 128 })
-        }
-      } catch (e) {}
-      this._lowBrightnessApplied = false
     }
   },
 
@@ -542,7 +504,6 @@ export default {
 
   stopFastForward() {
     if (this._rt) this._rt.stopFastForward()
-    this.applyKeepScreenOn()
   },
 
   skipToOptions() {
@@ -743,7 +704,6 @@ export default {
   toggleAutoPlay() {
     this.vibrateIfEnabled()
     this.isAutoPlay = !this.isAutoPlay
-    this.applyKeepScreenOn()
     if (this.isAutoPlay) {
       prompt.showToast({ message: "自动播放已开启" })
     } else {
@@ -758,29 +718,6 @@ export default {
       clearTimeout(this.autoPlayTimer)
       this.autoPlayTimer = null
     }
-  },
-
-  applyKeepScreenOn() {
-    const on = this.isAutoPlay || (this.settings && this.settings.keepScreenOn)
-    try {
-      brightness.setKeepScreenOn({ keepScreenOn: !!on })
-    } catch (e) {}
-    // 仅低亮度模式调整亮度；普通模式保持系统当前亮度，不再强制拉高
-    const low = !!(this.settings && this.settings.lowBrightness)
-    try {
-      if (low) {
-        brightness.setValue({ value: 30 })
-        this._lowBrightnessApplied = true
-      } else if (this._lowBrightnessApplied) {
-        // 关闭低亮度：恢复进入游戏前的亮度
-        if (this._origBrightness !== undefined) {
-          brightness.setValue({ value: this._origBrightness })
-        } else {
-          brightness.setValue({ value: 128 })
-        }
-        this._lowBrightnessApplied = false
-      }
-    } catch (e) {}
   },
 
   startBottomTime() {
@@ -849,9 +786,6 @@ export default {
   ffTouchStart(event) {
     if (event && event.stopPropagation) event.stopPropagation()
     if (this.showOptions) return
-    try {
-      brightness.setKeepScreenOn({ keepScreenOn: true })
-    } catch (e) {}
     this.ffTouched = true
     this.ffMoved = false
     this.clearFFLongPressTimer()

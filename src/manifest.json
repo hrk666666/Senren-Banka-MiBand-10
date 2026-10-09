@@ -1,8 +1,8 @@
 {
   "package": "com.hrk.qlwh.band",
   "name": "千恋＊万花",
-  "versionName": "1.3.5",
-  "versionCode": 9,
+  "versionName": "1.3.6",
+  "versionCode": 10,
   "minPlatformVersion": 1000,
   "icon": "/common/logo.png",
   "deviceTypeList": [
@@ -23,9 +23,6 @@
     },
     {
       "name": "system.audio"
-    },
-    {
-      "name": "system.brightness"
     },
     {
       "name": "system.vibrator"
