@@ -460,13 +460,13 @@ export default {
     }
 
     if (this.currentCharIndex < this.fullText.length) {
-      // 每 2 字符一帧，渲染频率减半
-      this.displayText += this.fullText.substr(this.currentCharIndex, 2)
-      this.currentCharIndex += 2
+      // 单字符逐字推进：2 字步进会让玩家看到"两个字一起蹦"的跳变
+      this.displayText += this.fullText.charAt(this.currentCharIndex)
+      this.currentCharIndex += 1
       const speed = this.settings.textSpeed
       this.typeWriterTimer = setTimeout(() => this.startTypeWriter(), speed)
 
-      if (this.currentCharIndex % 10 === 0 && this.displayText.length > 20) {
+      if (this.currentCharIndex % 5 === 0 && this.displayText.length > 20) {
         const sc = this.$element("dialogueScroll")
         if (sc) sc.scrollTo({ top: 9999, behavior: "instant" })
       }
