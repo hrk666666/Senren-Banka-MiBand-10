@@ -16,7 +16,7 @@
       </div>
       <slider
         class="slider"
-        min="20"
+        min="40"
         max="100"
         step="5"
         value="{{ settings.textSpeed }}"
